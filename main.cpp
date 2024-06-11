@@ -109,11 +109,28 @@ public:
 		this->shape = sf::RectangleShape(sf::Vector2f(this->_height, this->_width)); 
 	};
 
-	void decress_speed()
+	void decress_speed(sf::RenderWindow &window, const sf::Event& event)
 	{
-		std::cout << "hello---"<< _current_speed << std::endl;
-		_current_speed--;
-		std::this_thread::sleep_for(std::chrono::milliseconds(100));
+		if (event.key.code == sf::Keyboard::W || event.key.code == sf::Keyboard::S)
+		{
+			double last_time = getTime();
+			while (_current_speed > 0)
+			{
+				double current_time = getTime();
+				double elapsed_time = current_time - last_time;
+				shape.setRotation(get_current_deggre());
+				shape.setPosition(get_cord().first, get_cord().second);
+
+
+				last_time = current_time;
+				window.clear(sf::Color::Black);
+				_current_speed--;
+				move(elapsed_time);
+				window.draw(shape);  
+				window.display();
+				window.clear();
+			}
+		}
 	}
 };
 
@@ -143,7 +160,7 @@ int main()
 			if (event.type == sf::Event::KeyPressed)
 				car.calc_speed_deggre(event);
 			if (event.type == sf::Event::KeyReleased)
-				car.decress_speed();
+				car.decress_speed(window, event);
 		}
 		car.move(elapsed_time);
 		window.draw(car.shape);  
