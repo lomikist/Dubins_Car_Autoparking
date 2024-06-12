@@ -25,8 +25,9 @@ private:
 	float _car_deggre = 0;
 	float _wheel_deggre = 0;
 	float _current_speed = 0;
-	float _max_speed = 140;
+	float _max_speed = 500;
 	float _back_max_speed = -80;
+	float _accelaration = 1;
 public:
 	sf::RectangleShape shape;
 
@@ -43,50 +44,50 @@ public:
 		{
 			_car_deggre--;
 			if (_current_speed < _max_speed)
-				_current_speed++;
+				_current_speed += _accelaration;
 		}
 		else if (W && D) 
 		{
 			_car_deggre++;
 			if (_current_speed < _max_speed)
-				_current_speed++;
+				_current_speed += _accelaration;
 		}
-		else if (A && S && _current_speed > 25)
+		else if (A && S && _current_speed > 50)
 		{
 			_car_deggre--;	// cuz move is backward 
 			if (_current_speed > _back_max_speed)
-				_current_speed--;
+				_current_speed -= _accelaration;
 		}
-		else if (A && S && _current_speed < -25)
+		else if (A && S && _current_speed < -50)
 		{
 			_car_deggre++;	// cuz move is backward 
 			if (_current_speed > _back_max_speed)
-				_current_speed--;
+				_current_speed -= _accelaration;
 		}
-		else if (S && D && _current_speed > 25) // cuz move is backward 
+		else if (S && D && _current_speed > 50) // cuz move is backward 
 		{
 			_car_deggre++;
 			if (_current_speed > _back_max_speed)
-				_current_speed--;
+				_current_speed -= _accelaration;
 		}
-		else if (S && D && _current_speed < -25) // cuz move is backward 
+		else if (S && D && _current_speed < -50) // cuz move is backward 
 		{
 			_car_deggre--;
 			if (_current_speed > _back_max_speed)
-				_current_speed--;
+				_current_speed -= _accelaration;
 		}
-		else if (A && _current_speed > 25) 
+		else if (A && _current_speed > 50) 
 			_car_deggre--;
-		else if (A && _current_speed < -25) 
+		else if (A && _current_speed < -50) 
 			_car_deggre++;
 		else if (S && _current_speed > _back_max_speed) 
-			_current_speed-=3;
-		else if (D && _current_speed > 25) 
+			_current_speed -= _accelaration;
+		else if (D && _current_speed > 50) 
 			_car_deggre++;
-		else if (D && _current_speed < -25) 
+		else if (D && _current_speed < -50) 
 			_car_deggre--;
 		else if (W && _current_speed < _max_speed) 
-			_current_speed++;
+			_current_speed += _accelaration;
 	};
 
 	float get_current_deggre(){
@@ -97,8 +98,6 @@ public:
 	{
 		_cords.first += _current_speed * elapsed_time * std::sin(d2r(_car_deggre));
 		_cords.second -= _current_speed * elapsed_time * std::cos(d2r(_car_deggre));
-		// std::cout << _car_deggre << std::endl;
-		// std::cout << _current_speed << "----" << _back_max_speed << std::endl;
 	}
 
 	Car(std::pair<float, float> cords, float car_deggre, float wheel_deggree) : _cords(cords),
@@ -121,10 +120,24 @@ public:
 				shape.setRotation(get_current_deggre());
 				shape.setPosition(get_cord().first, get_cord().second);
 
+				last_time = current_time;
+				window.clear(sf::Color::Black);
+				_current_speed -= _accelaration;
+				move(elapsed_time);
+				window.draw(shape);  
+				window.display();
+				window.clear();
+			}
+			while (_current_speed < 0)
+			{
+				double current_time = getTime();
+				double elapsed_time = current_time - last_time;
+				shape.setRotation(get_current_deggre());
+				shape.setPosition(get_cord().first, get_cord().second);
 
 				last_time = current_time;
 				window.clear(sf::Color::Black);
-				_current_speed--;
+				_current_speed += _accelaration;
 				move(elapsed_time);
 				window.draw(shape);  
 				window.display();
