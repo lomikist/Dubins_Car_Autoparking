@@ -5,9 +5,9 @@
 #include <chrono>
 #include <thread>
 
-const double PI = 3.14159265358979323846;
+const float PI = 3.14159265358979323846;
 
-double d2r(double degrees) {
+float d2r(float degrees) {
     return degrees * PI / 180.0;
 }
 
@@ -18,7 +18,7 @@ public:
 	sf::Clock clock;
 	sf::RenderWindow window;
 
-	double _delta_time = 0;
+	float _delta_time = 0;
 	sf::Time elapsed_time;
 	
 	Engine(int width ,int height){
@@ -32,7 +32,7 @@ public:
         (window.draw(objects), ...);
     }
 
-	double delta_time()
+	float delta_time()
 	{
 		elapsed_time = clock.restart();
         _delta_time = elapsed_time.asSeconds();
@@ -42,114 +42,111 @@ public:
 class Car 
 {
 public:
-	std::pair <double, double> _cords; //{x,y}
-	std::pair <double, double> _dest_cords = {700, 100};//{x,y}
+	std::pair <float, float> _car_cords; //{x,y}
+	std::pair <float, float> _car_start_cords; //{x,y}
+
+
+	std::pair <float, float> _dest_cords = {600, 600};//{x,y}
 	
-	double _dest_deggre = 45;
+	float _dest_deggre = 45;
 
-
-	double _width = 50;
-	double _height = 25;
+	float _width = 50;
+	float _height = 25;
 	
-	double _car_deggre = 0;
-	double _current_speed = 39;
-	double _radius = 100;
-	double _angular_speed = 20;
-
-	// double _max_speed = 50;
-	// double _back_max_speed = -40;
-	// double _wheel_deggre = 0;
-	// double _accel = 2;
+	float _car_deggre = 0;
+	float _current_speed = 39;
+	float _radius = 70;
+	float _angular_speed = 20;
 
 public:
+
+	std::pair<float, float> car_center;
+	std::pair<float, float> dest_center;
+	std::pair<float, float> dest_tangent_point;
+
 	sf::RectangleShape shape;
 	sf::RectangleShape parking_shape;
 
-	const std::pair<double, double>& get_cord(){return _cords;};
-	double get_width(){return _width;};
-	double get_height(){return _height;};
+	const std::pair<float, float>& get_cord(){return _car_cords;};
+	float get_width(){return _width;};
+	float get_height(){return _height;};
 
 
 	void move_forward(float delta_time)
 	{
 		shape.setRotation(_car_deggre);
-		shape.setPosition(_cords.first, _cords.second);
-		_cords.first += _current_speed * delta_time * std::sin(d2r(_car_deggre));
-		_cords.second -= _current_speed * delta_time * std::cos(d2r(_car_deggre));
+		shape.setPosition(_car_cords.first, _car_cords.second);
+		_car_cords.first += _current_speed * delta_time * std::sin(d2r(_car_deggre));
+		_car_cords.second -= _current_speed * delta_time * std::cos(d2r(_car_deggre));
 	}
 
 	void move_circle(float delta_time) // maybe we can make it depended on radius.
 	{
-		double omega = delta_time * (_current_speed / _radius) * (180.0 / PI);
+		float omega = delta_time * (_current_speed / _radius) * (180.0 / PI);
 		_car_deggre += omega;
 		if (_car_deggre >= 360)
 			_car_deggre = 0;		 
 		shape.setRotation(_car_deggre);
-		shape.setPosition(_cords.first, _cords.second);
-		_cords.first += _current_speed * delta_time * std::sin(d2r(_car_deggre));
-		_cords.second -= _current_speed * delta_time * std::cos(d2r(_car_deggre));
+		shape.setPosition(_car_cords.first, _car_cords.second);
+		_car_cords.first += _current_speed * delta_time * std::sin(d2r(_car_deggre));
+		_car_cords.second -= _current_speed * delta_time * std::cos(d2r(_car_deggre));
 	}
 
-	double calc_disired_angle(const std::pair<double, double>& first, const std::pair<double, double>& second)
+	float calc_disired_angle(const std::pair<float, float>& point1, const std::pair<float, float>& point2)
 	{
-		double deltaX = second.first - first.first;
-		double deltaY = second.second + first.second;
-		double angleRadians = std::atan2(deltaY, deltaX);
-		double angleDegrees = angleRadians * 180.0 / M_PI;
-		return angleDegrees;
+		float deltaX = point2.first - point1.first;
+		float deltaY = point2.second - point1.second;
+
+		double angleRadians = atan2(deltaY, deltaX);
+
+		double angleDegrees = angleRadians * 180 / M_PI;
+		return 90 + angleDegrees;
 	}
 	
 	void move(float delta_time)
 	{
-		auto car_center = get_circle_cord(_cords, _car_deggre);
-		auto dest_center = get_circle_cord(_dest_cords, _dest_deggre);
-
-		double line_degree = calc_disired_angle(car_center, dest_center); 
-
+		float line_degree = calc_disired_angle(car_center, dest_center); 	
 		//TODO calc_disired in not workinkg well check this ,
 		//TODO car rotation cordinates are slightly not correct check this. and 
-		if (_car_deggre < line_degree - 2)
+		std::cout << _car_deggre << "==" << line_degree << std::endl;
+		if (_car_deggre < line_degree)
 			move_circle(delta_time);
 		else
 			move_forward(delta_time);
 	}
 
-	double get_current_deggre(){
-		return _car_deggre;
-	};
-
-	Car(std::pair<double, double> cords, double car_deggre, double wheel_deggree) : _cords(cords),
+	Car(std::pair<float, float> cords, float car_deggre, float wheel_deggree) : _car_cords(cords),
 																				_car_deggre(car_deggre)
 	{
+		// _car_start_cords = cords;
+
 		shape = sf::RectangleShape(sf::Vector2f(this->_height, this->_width));
-		shape.setOrigin({_height / 2., _width / 2.});
-		
+		shape.setOrigin({_height / 2.f, _width / 2.f});
+
 		parking_shape = sf::RectangleShape(sf::Vector2f(this->_height, this->_width));
-		parking_shape.setOrigin({_height / 2., _width / 2.});
+		parking_shape.setOrigin({_height / 2.f, _width / 2.f});
 		parking_shape.setRotation(_dest_deggre);
 		parking_shape.setPosition(_dest_cords.first, _dest_cords.second);
+
+		/*
+		* calc dest and car center.
+		*/
+		car_center = get_circle_cord(_car_cords, _car_deggre);
+		dest_center = get_circle_cord(_dest_cords, _dest_deggre);
+
+		dest_tangent_point.first = dest_center.first - (car_center.first - _car_cords.first); 
+		dest_tangent_point.second = dest_center.second - (car_center.second - _car_cords.second);
 	};
 
-	std::pair<double, double> get_circle_cord(const std::pair<double, double>& cords, double angle)
+	std::pair<float, float> get_circle_cord(const std::pair<float, float>& cords, float angle)
 	{
-		std::pair<double, double> circle_cord;// {x, y}
+		std::pair<float, float> circle_cord;// {x, y}
 
 		circle_cord.first = cords.first + _radius * std::cos(d2r(angle));
 		circle_cord.second = cords.second + _radius * std::sin(d2r(angle));
 
 		return circle_cord;
 	}
-
-	void draw_circe(Engine& engine)
-	{
-		sf::CircleShape circle(_radius);
-		circle.setFillColor(sf::Color::Green);
-		circle.setPosition(100 , 500 - _radius);
-		engine.window.draw(circle);
-	}
-
-
-
 };
 
 
@@ -157,7 +154,7 @@ public:
 
 int main()
 {
-	Car car({100,500}, 0, 0);
+	Car car({900,100}, 0, 0);
 	Engine eng(1900, 800);
 
 	while (eng.window.isOpen())
@@ -172,10 +169,17 @@ int main()
 			// 	car.calc_speed(eng._delta_time);
 			// }
 		}
-		// car.calc_speed(eng._delta_time);
 		car.move(eng._delta_time);
+
+		sf::Vertex line[] =
+		{
+			sf::Vertex(sf::Vector2f(car.car_center.first, car.car_center.second)),
+			sf::Vertex(sf::Vector2f(car.dest_center.first, car.dest_center.second))
+		};
+
+		eng.window.draw(line, 2, sf::Lines);
+
 		eng.draw(car.shape, car.parking_shape);  
-		car.draw_circe(eng);
 		eng.window.display();
 		eng.window.clear();
 	}
