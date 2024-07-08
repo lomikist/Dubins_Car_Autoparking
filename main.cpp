@@ -28,7 +28,8 @@ public:
 	~Engine() = default;
 
 	template<typename... T>
-    void draw(T&... objects) {
+    void draw(T&... objects)
+	{
         (window.draw(objects), ...);
     }
 
