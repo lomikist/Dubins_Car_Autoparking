@@ -21,9 +21,10 @@ public:
 	float _delta_time = 0;
 	sf::Time elapsed_time;
 	
-	Engine(int width ,int height){
+	Engine(int width ,int height)
+	{
 		window.create(sf::VideoMode(width, height), "TESLA autoparking.");
-		window.setPosition(sf::Vector2{0,0});
+		window.setPosition(sf::Vector2i(0,0));
 	};
 	~Engine() = default;
 
