@@ -1,6 +1,8 @@
 #include "engine.hpp"
 #include "helpers.hpp"
 
+#include <iostream>
+
 Engine::Engine()
 {
     _window.create(sf::VideoMode(WINDOW_WIDTH, WINDOW_HEIGHT),
@@ -22,7 +24,7 @@ Engine& Engine::getInstance()
 void Engine::draw()
 {
     _window.clear(sf::Color::Black);
-	// drawObjects();
+	drawObjects(_car);
     _window.display();
 }
 
@@ -36,6 +38,9 @@ void Engine::handleEvent(const sf::Event& event)
 {
     switch (event.type)
     {
+    case sf::Event::KeyPressed:
+        handleKeyPressedEvent(event.key.code);
+        break;
     case sf::Event::Closed:
         _window.close();
         break;
@@ -44,7 +49,19 @@ void Engine::handleEvent(const sf::Event& event)
     }
 }
 
-double Engine::measureElapsedTime()
+void Engine::handleKeyPressedEvent(sf::Keyboard::Key key)
+{
+    switch (key)
+    {
+    case sf::Keyboard::Escape:
+        _window.close();
+        break;
+    default:
+        break;
+    }
+}
+
+float Engine::measureElapsedTime()
 {
     _elapsedTime = _clock.restart().asSeconds();
     return _elapsedTime;

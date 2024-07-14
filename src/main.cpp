@@ -37,7 +37,7 @@ catch(...)
 
 
 
-// const float PI = 3.14159265358979323846;
+
 
 // float d2r(float degrees) {
 //     return degrees * PI / 180.0;
@@ -45,39 +45,13 @@ catch(...)
 
 
 
-// class Car 
-// {
-// public:
-// 	std::pair <float, float> _car_cords; //{x,y}
-// 	std::pair <float, float> _car_start_cords; //{x,y}
+// 	int _move_direct = 1;//1 - first circle, 2 - forward, 3 - sec circle
 
-// 	int _move_direct = 1;//1 - first circle, 2 - forward, 3 - sec circle 
-
-// 	std::pair <float, float> _dest_cords = {900, 600};//{x,y}
-	
-// 	float _dest_deggre = 45;
-
-// 	float _width = 50;
-// 	float _height = 25;
-	
 // 	float _car_deggre = 0;
 // 	float _current_speed = 100;
 // 	float _radius = 70;
 // 	float _angular_speed = 20;
-
-// public:
-
-// 	std::pair<float, float> car_center;
-// 	std::pair<float, float> dest_center;
 // 	std::pair<float, float> _dest_tangent_point;
-
-// 	sf::RectangleShape shape;
-// 	sf::RectangleShape parking_shape;
-
-// 	const std::pair<float, float>& get_cord(){return _car_cords;};
-// 	float get_width(){return _width;};
-// 	float get_height(){return _height;};
-
 
 // 	void move_forward(float delta_time)
 // 	{
@@ -169,41 +143,3 @@ catch(...)
 // 		return circle_cord;
 // 	}
 // };
-
-
-
-
-// int main()
-// {
-	// Car car({100,100}, 0, 0);
-	// Engine eng(1900, 800);
-
-	// while (eng.window.isOpen())
-	// {
-	// 	eng.window.clear(sf::Color::Black);
-	// 	eng.delta_time();
-	// 	while (eng.window.pollEvent(eng.event))
-	// 	{
-	// 		if (eng.event.type == sf::Event::Closed)
-	// 			eng.window.close();
-	// 		if (eng.event.type == sf::Event::MouseButtonPressed)
-	// 		{
-	// 			if (eng.event.mouseButton.button == sf::Mouse::Left)
-	// 			{
-	// 				// std::cout <<"hell" << std::endl;
-	// 				//TODO make it more optimal it sooooooooooooooooooooooo bad 
-	// 				car._move_direct = 1;
-	// 				car._current_speed = 40;
-	// 				car._dest_cords.first = eng.event.mouseButton.x;
-	// 				car._dest_cords.second = eng.event.mouseButton.y;
-	// 				car.parking_shape.setRotation(car._dest_deggre);
-	// 				car.parking_shape.setPosition(car._dest_cords.first, car._dest_cords.second);
-	// 				car.calc_centers();
-	// 			}
-	// 		}
-	// 		// if (eng.event.type == sf::Event::KeyPressed){
-	// 		// 	car.calc_speed(eng._delta_time);
-	// 		// }
-	// 	}
-	// 	car.move(eng._delta_time);
-// }

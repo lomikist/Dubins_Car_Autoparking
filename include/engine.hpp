@@ -1,8 +1,9 @@
 #ifndef ENGINE_HPP
 #define ENGINE_HPP
 
-#include <SFML/Graphics.hpp>
+#include "car.hpp"
 
+// Singleton design pattern is used
 class Engine final
 {
 public:
@@ -10,12 +11,15 @@ public:
     ~Engine();
 
     void draw();
+
     template<typename... T>
     void drawObjects(T&&... objects);
 
+    // Event handlers
     void handleEvent(const sf::Event& event);
+    void handleKeyPressedEvent(sf::Keyboard::Key key);
 
-    double measureElapsedTime();
+    float measureElapsedTime();
 
     sf::RenderWindow& getWindow();
 
@@ -27,8 +31,9 @@ private:
     Engine& operator=(Engine&&) = delete;
 
 private:
+    Car _car;
 	sf::Clock _clock;
-    double _elapsedTime;
+    float _elapsedTime;
     sf::RenderWindow _window;
 };
 
