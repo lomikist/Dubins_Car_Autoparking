@@ -2,6 +2,7 @@
 #include "helpers.hpp"
 
 #include <iostream>
+#include <cmath>
 
 Engine::Engine()
 {
@@ -21,8 +22,15 @@ Engine& Engine::getInstance()
     return engine;
 }
 
+float d2r(float degrees) {
+    return degrees * pi / 180.0;
+}
+
 void Engine::draw()
 {
+    measureElapsedTime();
+    _car.processMove(_elapsedTime);
+
     _window.clear(sf::Color::Black);
 	drawObjects(_car);
     _window.display();

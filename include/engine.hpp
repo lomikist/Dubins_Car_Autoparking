@@ -32,8 +32,8 @@ private:
 
 private:
     Car _car;
-	sf::Clock _clock;
     float _elapsedTime;
+	sf::Clock _clock;
     sf::RenderWindow _window;
 };
 

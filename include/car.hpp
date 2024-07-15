@@ -14,7 +14,21 @@ public:
     Car& operator=(const Car&) = delete;
     Car& operator=(Car&&) = delete;
 
+    // Process car move
+    void processMove(float elapsedTime);
+    void moveCircle(float elapsedTime);
+
 private:
+    enum class CarMoveType
+    {
+        Forward,
+        Circle,
+    };
+
+private:
+    float _speed;
+    float _radius;
+    CarMoveType _moveType;
 };
 
 #endif  /* CAR_HPP */
