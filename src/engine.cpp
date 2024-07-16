@@ -1,9 +1,6 @@
 #include "engine.hpp"
 #include "helpers.hpp"
 
-#include <iostream>
-#include <cmath>
-
 Engine::Engine()
 {
     _window.create(sf::VideoMode(WINDOW_WIDTH, WINDOW_HEIGHT),
@@ -20,10 +17,6 @@ Engine& Engine::getInstance()
 {
     static Engine engine;
     return engine;
-}
-
-float d2r(float degrees) {
-    return degrees * pi / 180.0;
 }
 
 void Engine::draw()

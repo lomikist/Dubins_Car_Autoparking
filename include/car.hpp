@@ -16,6 +16,7 @@ public:
 
     // Process car move
     void processMove(float elapsedTime);
+    void moveForward(float elapsedTime);
     void moveCircle(float elapsedTime);
 
 private:
@@ -25,9 +26,13 @@ private:
         Circle,
     };
 
+    float radianToDegree(float radian);
+    float degreeToRadian(float degree);
+
 private:
     float _speed;
     float _radius;
+    float _angularVelocity;
     CarMoveType _moveType;
 };
 

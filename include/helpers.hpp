@@ -2,7 +2,7 @@
 #define HELPERS_HPP
 
 // Application defines
-#define APP_NAME "Car Automatic Parking"
+#define APP_NAME "Dubins Car Automatic Parking"
 #define WINDOW_WIDTH 800
 #define WINDOW_HEIGHT 800
 
@@ -16,7 +16,7 @@
 #define CAR_BLUE 25
 #define CAR_ROTATION 0
 #define CAR_SPEED 100
-#define CAR_RADIUS 100
+#define CAR_RADIUS 50
 
 constexpr float pi = 3.14159f;
 
