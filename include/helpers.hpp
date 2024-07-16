@@ -9,14 +9,14 @@
 // Car defines
 #define CAR_WIDTH 50
 #define CAR_HEIGHT 25
-#define START_POS_X 100
-#define START_POS_Y 100
+#define CAR_POS_X 400
+#define CAR_POS_Y 400
 #define CAR_RED 100
 #define CAR_GREEN 150
 #define CAR_BLUE 25
 #define CAR_ROTATION 0
 #define CAR_SPEED 100
-#define CAR_RADIUS 50
+#define RADIUS 50
 
 constexpr float pi = 3.14159f;
 
