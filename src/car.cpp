@@ -11,14 +11,13 @@ Car::Car()
     _rect.setFillColor(sf::Color(CAR_RED, CAR_GREEN, CAR_BLUE));
     _rect.setRotation(CAR_ROTATION);
     _speed = CAR_SPEED;
-    _moveType = CarMoveType::Circle;
     _circle.setRadius(RADIUS);
     _circle.setOrigin(RADIUS, RADIUS);
 
     // ******************* Testing ************************ //
     _circle.setOutlineColor(sf::Color(CAR_RED, CAR_GREEN, CAR_BLUE));
     _circle.setFillColor(sf::Color::Black);
-    _circle.setOutlineThickness(5);
+    _circle.setOutlineThickness(2);
     calcCircleCenterCoords();
 }
 
@@ -31,15 +30,15 @@ void Car::draw(sf::RenderTarget& target, sf::RenderStates states) const
     target.draw(_circle, states);
 }
 
-void Car::processMove(float elapsedTime)
+void Car::move(float elapsedTime, MoveType moveType)
 {
-    if (_moveType == CarMoveType::Forward)
-        moveForward(elapsedTime);
+    if (moveType == MoveType::Straight)
+        moveStraight(elapsedTime);
     else
-        moveCircle(elapsedTime);
+        moveCircle(elapsedTime, moveType);
 }
 
-void Car::moveForward(float elapsedTime)
+void Car::moveStraight(float elapsedTime)
 {
     float rotation = _rect.getRotation();
     float offsetX = elapsedTime * _speed * std::cos(degreeToRadian(rotation));
@@ -47,19 +46,22 @@ void Car::moveForward(float elapsedTime)
     _rect.move(offsetX, offsetY);
 }
 
-void Car::moveCircle(float elapsedTime)
+void Car::moveCircle(float elapsedTime, MoveType moveType)
 {
     _angVelocity = radianToDegree(elapsedTime * (_speed / _circle.getRadius()));
-    _rect.rotate(_angVelocity);
-    moveForward(elapsedTime);
+    if (moveType == MoveType::Left)
+        _rect.rotate(-_angVelocity);
+    else
+        _rect.rotate(_angVelocity);
+    moveStraight(elapsedTime);
 }
 
 void Car::calcCircleCenterCoords()
 {
-    float rotation = _rect.getRotation();
     const sf::Vector2f& rectPos = _rect.getPosition();
-    float x = rectPos.x + _circle.getRadius() * std::sin(degreeToRadian(rotation));
-    float y = rectPos.y + _circle.getRadius() * std::cos(degreeToRadian(rotation));
+    float angleRadian = degreeToRadian(_rect.getRotation());
+    float x = rectPos.x + _circle.getRadius() * std::sin(angleRadian);
+    float y = rectPos.y + _circle.getRadius() * std::cos(angleRadian);
     _circle.setPosition(x, y);
 }
 

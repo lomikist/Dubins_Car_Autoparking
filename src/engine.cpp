@@ -1,5 +1,6 @@
 #include "engine.hpp"
 #include "helpers.hpp"
+#include "car.hpp"
 
 Engine::Engine()
 {
@@ -21,8 +22,8 @@ Engine& Engine::getInstance()
 
 void Engine::draw()
 {
-    measureElapsedTime();
-    _car.processMove(_elapsedTime);
+    // measureElapsedTime();
+    // _car.processMove(_elapsedTime);
 
     _window.clear(sf::Color::Black);
 	drawObjects(_car);
@@ -48,18 +49,28 @@ void Engine::handleEvent(const sf::Event& event)
     default:
         break;
     }
+
+    draw();
 }
 
 void Engine::handleKeyPressedEvent(sf::Keyboard::Key key)
 {
-    switch (key)
+    measureElapsedTime();
+
+    if (sf::Keyboard::isKeyPressed(sf::Keyboard::W))
     {
-    case sf::Keyboard::Escape:
-        _window.close();
-        break;
-    default:
-        break;
+        if (sf::Keyboard::isKeyPressed(sf::Keyboard::A) &&
+            !sf::Keyboard::isKeyPressed(sf::Keyboard::D))
+            _car.move(_elapsedTime, Car::MoveType::Left);
+        else if (sf::Keyboard::isKeyPressed(sf::Keyboard::D) &&
+            !sf::Keyboard::isKeyPressed(sf::Keyboard::A))
+            _car.move(_elapsedTime, Car::MoveType::Right);
+        else
+            _car.move(_elapsedTime, Car::MoveType::Straight);
     }
+
+    if (key == sf::Keyboard::Escape)
+        _window.close();
 }
 
 float Engine::measureElapsedTime()

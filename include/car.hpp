@@ -6,6 +6,14 @@
 class Car : public sf::Drawable
 {
 public:
+    enum class MoveType
+    {
+        Left,
+        Right,
+        Straight
+    };
+
+public:
     Car();
     ~Car();
 
@@ -17,19 +25,11 @@ public:
     void draw(sf::RenderTarget& target, sf::RenderStates states) const override;
 
     // Process car move
-    void processMove(float elapsedTime);
-    void moveForward(float elapsedTime);
-    void moveCircle(float elapsedTime);
-
-    const sf::CircleShape& getCircle();
+    void move(float elapsedTime, MoveType moveType);
+    void moveStraight(float elapsedTime);
+    void moveCircle(float elapsedTime, MoveType moveType);
 
 private:
-    enum class CarMoveType
-    {
-        Forward,
-        Circle,
-    };
-
     void calcCircleCenterCoords();
     float radianToDegree(float radian);
     float degreeToRadian(float degree);
@@ -37,7 +37,6 @@ private:
 private:
     float _speed;
     float _angVelocity;
-    CarMoveType _moveType;
     sf::CircleShape _circle;
     sf::RectangleShape _rect;
 };

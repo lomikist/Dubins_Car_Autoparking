@@ -11,7 +11,6 @@ public:
     ~Engine();
 
     void draw();
-
     template<typename... T>
     void drawObjects(T&&... objects);
 
