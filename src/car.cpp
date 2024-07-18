@@ -4,13 +4,14 @@
 
 Car::Car()
 {
+    _speed = CAR_SPEED;
+    _isAutoParkingOn = AUTO_PARKING;
     sf::Vector2f size(CAR_WIDTH, CAR_HEIGHT);
     _rect.setSize(size);
     _rect.setOrigin(size / 2.0f);
     _rect.setPosition(CAR_POS_X, CAR_POS_Y);
     _rect.setFillColor(sf::Color(CAR_RED, CAR_GREEN, CAR_BLUE));
     _rect.setRotation(CAR_ROTATION);
-    _speed = CAR_SPEED;
     _circle.setRadius(RADIUS);
     _circle.setOrigin(RADIUS, RADIUS);
 
@@ -30,6 +31,26 @@ void Car::draw(sf::RenderTarget& target, sf::RenderStates states) const
     target.draw(_circle, states);
 }
 
+void Car::processAutoParking(float elapsedTime)
+{
+    move(elapsedTime, MoveType::Right);
+}
+
+void Car::processUserControl(float elapsedTime)
+{
+    if (sf::Keyboard::isKeyPressed(sf::Keyboard::W))
+    {
+        if (sf::Keyboard::isKeyPressed(sf::Keyboard::A) &&
+            !sf::Keyboard::isKeyPressed(sf::Keyboard::D))
+            move(elapsedTime, Car::MoveType::Left);
+        else if (sf::Keyboard::isKeyPressed(sf::Keyboard::D) &&
+            !sf::Keyboard::isKeyPressed(sf::Keyboard::A))
+            move(elapsedTime, Car::MoveType::Right);
+        else
+            move(elapsedTime, Car::MoveType::Straight);
+    }
+}
+
 void Car::move(float elapsedTime, MoveType moveType)
 {
     if (moveType == MoveType::Straight)
@@ -40,9 +61,9 @@ void Car::move(float elapsedTime, MoveType moveType)
 
 void Car::moveStraight(float elapsedTime)
 {
-    float rotation = _rect.getRotation();
-    float offsetX = elapsedTime * _speed * std::cos(degreeToRadian(rotation));
-    float offsetY = elapsedTime * _speed * std::sin(degreeToRadian(rotation));
+    float angleRadian = degreeToRadian(_rect.getRotation());
+    float offsetX = elapsedTime * _speed * std::cos(angleRadian);
+    float offsetY = elapsedTime * _speed * std::sin(angleRadian);
     _rect.move(offsetX, offsetY);
 }
 
@@ -54,6 +75,11 @@ void Car::moveCircle(float elapsedTime, MoveType moveType)
     else
         _rect.rotate(_angVelocity);
     moveStraight(elapsedTime);
+}
+
+bool Car::isAutoParkingOn() const
+{
+    return _isAutoParkingOn;
 }
 
 void Car::calcCircleCenterCoords()
@@ -74,3 +100,4 @@ float Car::degreeToRadian(float degree)
 {
     return degree * (pi / 180.0f);
 }
+

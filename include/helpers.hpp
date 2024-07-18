@@ -17,6 +17,7 @@
 #define CAR_ROTATION 0
 #define CAR_SPEED 100
 #define RADIUS 50
+#define AUTO_PARKING true
 
 constexpr float pi = 3.14159f;
 

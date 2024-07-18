@@ -12,6 +12,7 @@ int main() try
         while (window.pollEvent(event))
             engine.handleEvent(event);
 
+        engine.processFrame();
 		engine.draw();
     }
     return 0;

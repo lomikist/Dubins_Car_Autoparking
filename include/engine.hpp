@@ -10,6 +10,9 @@ public:
     static Engine& getInstance();
     ~Engine();
 
+    void processFrame();
+    float measureElapsedTime();
+
     void draw();
     template<typename... T>
     void drawObjects(T&&... objects);
@@ -17,8 +20,6 @@ public:
     // Event handlers
     void handleEvent(const sf::Event& event);
     void handleKeyPressedEvent(sf::Keyboard::Key key);
-
-    float measureElapsedTime();
 
     sf::RenderWindow& getWindow();
 

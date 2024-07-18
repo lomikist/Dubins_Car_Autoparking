@@ -24,10 +24,15 @@ public:
 
     void draw(sf::RenderTarget& target, sf::RenderStates states) const override;
 
+    void processAutoParking(float elapsedTime);
+    void processUserControl(float elapsedTime);
+
     // Process car move
     void move(float elapsedTime, MoveType moveType);
     void moveStraight(float elapsedTime);
     void moveCircle(float elapsedTime, MoveType moveType);
+
+    bool isAutoParkingOn() const;
 
 private:
     void calcCircleCenterCoords();
@@ -37,6 +42,7 @@ private:
 private:
     float _speed;
     float _angVelocity;
+    bool _isAutoParkingOn;
     sf::CircleShape _circle;
     sf::RectangleShape _rect;
 };
