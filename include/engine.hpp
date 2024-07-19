@@ -2,6 +2,7 @@
 #define ENGINE_HPP
 
 #include "car.hpp"
+#include "parking_spot.hpp"
 
 // Singleton design pattern is used
 class Engine final
@@ -10,6 +11,9 @@ public:
     static Engine& getInstance();
     ~Engine();
 
+    void processFrame();
+    float measureElapsedTime();
+
     void draw();
     template<typename... T>
     void drawObjects(T&&... objects);
@@ -17,8 +21,6 @@ public:
     // Event handlers
     void handleEvent(const sf::Event& event);
     void handleKeyPressedEvent(sf::Keyboard::Key key);
-
-    float measureElapsedTime();
 
     sf::RenderWindow& getWindow();
 
@@ -31,8 +33,9 @@ private:
 
 private:
     Car _car;
-    float _elapsedTime;
 	sf::Clock _clock;
+    float _elapsedTime;
+    ParkingSpot _parkingSpot;
     sf::RenderWindow _window;
 };
 

@@ -20,13 +20,25 @@ Engine& Engine::getInstance()
     return engine;
 }
 
+void Engine::processFrame()
+{
+    measureElapsedTime();
+    if (_car.isAutoParkingOn())
+        _car.processAutoParking(_elapsedTime);
+    // else // Need to fix
+        // _car.processUserControl(_elapsedTime);
+}
+
+float Engine::measureElapsedTime()
+{
+    _elapsedTime = _clock.restart().asSeconds();
+    return _elapsedTime;
+}
+
 void Engine::draw()
 {
-    // measureElapsedTime();
-    // _car.processMove(_elapsedTime);
-
     _window.clear(sf::Color::Black);
-	drawObjects(_car);
+	drawObjects(_car, _parkingSpot);
     _window.display();
 }
 
@@ -55,28 +67,14 @@ void Engine::handleEvent(const sf::Event& event)
 
 void Engine::handleKeyPressedEvent(sf::Keyboard::Key key)
 {
-    measureElapsedTime();
-
-    if (sf::Keyboard::isKeyPressed(sf::Keyboard::W))
+    switch (key)
     {
-        if (sf::Keyboard::isKeyPressed(sf::Keyboard::A) &&
-            !sf::Keyboard::isKeyPressed(sf::Keyboard::D))
-            _car.move(_elapsedTime, Car::MoveType::Left);
-        else if (sf::Keyboard::isKeyPressed(sf::Keyboard::D) &&
-            !sf::Keyboard::isKeyPressed(sf::Keyboard::A))
-            _car.move(_elapsedTime, Car::MoveType::Right);
-        else
-            _car.move(_elapsedTime, Car::MoveType::Straight);
-    }
-
-    if (key == sf::Keyboard::Escape)
+    case sf::Keyboard::Escape:
         _window.close();
-}
-
-float Engine::measureElapsedTime()
-{
-    _elapsedTime = _clock.restart().asSeconds();
-    return _elapsedTime;
+        break;
+    default:
+        break;
+    }
 }
 
 sf::RenderWindow& Engine::getWindow()
