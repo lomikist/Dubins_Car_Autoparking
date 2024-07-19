@@ -2,6 +2,7 @@
 #define ENGINE_HPP
 
 #include "car.hpp"
+#include "parking_spot.hpp"
 
 // Singleton design pattern is used
 class Engine final
@@ -32,8 +33,9 @@ private:
 
 private:
     Car _car;
-    float _elapsedTime;
 	sf::Clock _clock;
+    float _elapsedTime;
+    ParkingSpot _parkingSpot;
     sf::RenderWindow _window;
 };
 

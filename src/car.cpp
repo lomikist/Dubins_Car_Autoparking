@@ -10,16 +10,16 @@ Car::Car()
     _rect.setSize(size);
     _rect.setOrigin(size / 2.0f);
     _rect.setPosition(CAR_POS_X, CAR_POS_Y);
-    _rect.setFillColor(sf::Color(CAR_RED, CAR_GREEN, CAR_BLUE));
     _rect.setRotation(CAR_ROTATION);
     _circle.setRadius(RADIUS);
     _circle.setOrigin(RADIUS, RADIUS);
+    setCircleCenterPos(_rect, _circle);
 
-    // ******************* Testing ************************ //
-    _circle.setOutlineColor(sf::Color(CAR_RED, CAR_GREEN, CAR_BLUE));
+    // Colors
+    _rect.setFillColor(sf::Color(CAR_RED, CAR_GREEN, CAR_BLUE));
     _circle.setFillColor(sf::Color::Black);
+    _circle.setOutlineColor(sf::Color(30, 144, 255));
     _circle.setOutlineThickness(2);
-    calcCircleCenterCoords();
 }
 
 Car::~Car()
@@ -81,23 +81,3 @@ bool Car::isAutoParkingOn() const
 {
     return _isAutoParkingOn;
 }
-
-void Car::calcCircleCenterCoords()
-{
-    const sf::Vector2f& rectPos = _rect.getPosition();
-    float angleRadian = degreeToRadian(_rect.getRotation());
-    float x = rectPos.x + _circle.getRadius() * std::sin(angleRadian);
-    float y = rectPos.y + _circle.getRadius() * std::cos(angleRadian);
-    _circle.setPosition(x, y);
-}
-
-float Car::radianToDegree(float radian)
-{
-    return radian * (180.0f / pi);
-}
-
-float Car::degreeToRadian(float degree)
-{
-    return degree * (pi / 180.0f);
-}
-

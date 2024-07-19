@@ -35,11 +35,6 @@ public:
     bool isAutoParkingOn() const;
 
 private:
-    void calcCircleCenterCoords();
-    float radianToDegree(float radian);
-    float degreeToRadian(float degree);
-
-private:
     float _speed;
     float _angVelocity;
     bool _isAutoParkingOn;
