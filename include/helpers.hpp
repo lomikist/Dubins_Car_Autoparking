@@ -1,6 +1,9 @@
 #ifndef HELPERS_HPP
 #define HELPERS_HPP
 
+#include <SFML/Graphics.hpp>
+#include "car.hpp"
+
 // Application defines
 #define APP_NAME "Dubins Car Automatic Parking"
 #define WINDOW_WIDTH 800
@@ -13,7 +16,7 @@
 #define CAR_POS_Y 250
 #define CAR_ROTATION 0
 #define CAR_SPEED 100
-#define AUTO_PARKING false
+#define AUTO_PARKING true
 
 // Car color defines
 #define CAR_RED 100
@@ -38,6 +41,9 @@ constexpr float pi = 3.14159f;
 // Util functions
 float radianToDegree(float radian);
 float degreeToRadian(float degree);
-void setCircleCenterPos(const sf::RectangleShape& rect, sf::CircleShape& circle);
+float degreeMod(float degree, float x);
+float calcDistance(float x1, float y1, float x2, float y2);
+sf::Vector2f getCircleCenterPos(const sf::RectangleShape& rect,
+    float radius, Car::MoveType moveType);
 
 #endif  /* HELPERS_HPP */

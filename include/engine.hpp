@@ -2,7 +2,6 @@
 #define ENGINE_HPP
 
 #include "car.hpp"
-#include "parking_spot.hpp"
 
 // Singleton design pattern is used
 class Engine final

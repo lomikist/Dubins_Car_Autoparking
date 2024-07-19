@@ -24,7 +24,7 @@ void Engine::processFrame()
 {
     measureElapsedTime();
     if (_car.isAutoParkingOn())
-        _car.processAutoParking(_elapsedTime);
+        _car.processAutoParking(_elapsedTime, _parkingSpot);
     // else // Need to fix
         // _car.processUserControl(_elapsedTime);
 }

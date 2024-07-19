@@ -10,7 +10,6 @@ ParkingSpot::ParkingSpot()
     _rect.setRotation(SPOT_ROTATION);
     _circle.setRadius(RADIUS);
     _circle.setOrigin(RADIUS, RADIUS);
-    setCircleCenterPos(_rect, _circle);
 
     // Colors
     _rect.setFillColor(sf::Color(SPOT_RED, SPOT_GREEN, SPOT_BLUE));
@@ -26,4 +25,14 @@ void ParkingSpot::draw(sf::RenderTarget& target, sf::RenderStates states) const
 {
     target.draw(_rect, states);
     target.draw(_circle, states);
+}
+
+sf::CircleShape& ParkingSpot::getCircle()
+{
+    return _circle;
+}
+
+sf::RectangleShape& ParkingSpot::getRect()
+{
+    return _rect;
 }
