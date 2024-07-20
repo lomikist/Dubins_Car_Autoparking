@@ -2,6 +2,9 @@
 #include "car.hpp"
 #include "helpers.hpp"
 
+// TODO: Delete this include after testing
+#include <iostream>
+
 Car::Car()
 {
     _speed = CAR_SPEED;
@@ -13,7 +16,6 @@ Car::Car()
     _rect.setRotation(CAR_ROTATION);
     _circle.setRadius(RADIUS);
     _circle.setOrigin(RADIUS, RADIUS);
-    setCircleCenterPos(_rect, _circle);
 
     // Colors
     _rect.setFillColor(sf::Color(CAR_RED, CAR_GREEN, CAR_BLUE));
@@ -31,9 +33,19 @@ void Car::draw(sf::RenderTarget& target, sf::RenderStates states) const
     target.draw(_circle, states);
 }
 
-void Car::processAutoParking(float elapsedTime)
+void Car::processAutoParking(float elapsedTime, ParkingSpot& parkingSpot)
 {
-    move(elapsedTime, MoveType::Right);
+    _shortestPath = findShortestPath(parkingSpot);
+
+    // ************** Testing ************** //
+    for (auto elem : _paths)
+    {
+        std::cout << elem.pathLength << ", Path type: " << (int)elem.pathType << std::endl;
+    }
+    std::cout << "\n\n-- Shortest path\n";
+        std::cout << _shortestPath.pathLength << ", Path type: "
+            << (int)_shortestPath.pathType << std::endl;
+    _isAutoParkingOn = false;
 }
 
 void Car::processUserControl(float elapsedTime)
@@ -49,6 +61,58 @@ void Car::processUserControl(float elapsedTime)
         else
             move(elapsedTime, Car::MoveType::Straight);
     }
+}
+
+Car::ParkingPath& Car::findShortestPath(ParkingSpot& parkingSpot)
+{
+    // Calculate car and parking spot left and right circles centers
+    float radius = _circle.getRadius();
+    sf::RectangleShape& spotRect = parkingSpot.getRect();
+    sf::Vector2f carLeftCirclePos = getCircleCenterPos(_rect, radius, Car::MoveType::Left);
+    sf::Vector2f carRightCirclePos = getCircleCenterPos(_rect, radius, Car::MoveType::Right);
+    sf::Vector2f spotLeftCirclePos = getCircleCenterPos(spotRect, radius, Car::MoveType::Left);
+    sf::Vector2f spotRightCirclePos = getCircleCenterPos(spotRect, radius, Car::MoveType::Right);
+
+    float carRot = _rect.getRotation();
+    float spotRot = spotRect.getRotation();
+    // Left turn, Straight, Left turn
+    addPathToVector(carLeftCirclePos, carRot, spotLeftCirclePos, spotRot, radius, Car::PathType::LSL);
+    // Left turn, Straight, Right turn
+    addPathToVector(carLeftCirclePos, carRot, spotRightCirclePos, spotRot, radius, Car::PathType::LSR);
+    // Right turn, Straight, Left turn
+    addPathToVector(carRightCirclePos, carRot, spotLeftCirclePos, spotRot, radius, Car::PathType::RSL);
+    // Right turn, Straight, Right turn
+    addPathToVector(carRightCirclePos, carRot, spotRightCirclePos, spotRot, radius, Car::PathType::RSR);
+
+    // Return shortest path
+    auto cmp = [](const ParkingPath& a, const ParkingPath& b)
+    {
+        return a.pathLength < b.pathLength;
+    };
+    auto shortestPathIt = std::min_element(_paths.begin(), _paths.end(), cmp);
+    if (shortestPathIt != _paths.end())
+        return *shortestPathIt;
+    return _paths.back();
+}
+
+void Car::addPathToVector(sf::Vector2f& carCirclePos, float carRotation,
+    sf::Vector2f& spotCirclePos, float spotRotation, float radius, PathType pathType)
+{
+    auto [x1, y1] = carCirclePos;
+    auto [x2, y2] = spotCirclePos;
+    float alphaDegree = radianToDegree(std::atan2(y2 - y1, x2 - x1)) - carRotation;
+    float betaDegree = spotRotation - radianToDegree(std::atan2(y2 - y1, x2 - x1) - pi);
+
+    ParkingPath path;
+    path.pathType = pathType;
+    path.carCirclePos = carCirclePos;
+    path.spotCirclePos = spotCirclePos;
+    path.carCirclePathLen = radius * degreeMod(alphaDegree, 360.0f);
+    path.spotCirclePathLen = radius * degreeMod(betaDegree, 360.0f);
+    path.certersDistance = calcDistance(x1, y1, x2, y2);
+    path.straightPathLen = path.certersDistance;
+    path.pathLength = path.carCirclePathLen + path.straightPathLen + path.spotCirclePathLen;
+    _paths.push_back(path);
 }
 
 void Car::move(float elapsedTime, MoveType moveType)

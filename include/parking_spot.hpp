@@ -16,6 +16,9 @@ public:
 
     void draw(sf::RenderTarget& target, sf::RenderStates states) const override;
 
+    sf::CircleShape& getCircle();
+    sf::RectangleShape& getRect();
+
 private:
     sf::CircleShape _circle;
     sf::RectangleShape _rect;
