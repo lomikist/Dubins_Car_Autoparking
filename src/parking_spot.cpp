@@ -1,5 +1,4 @@
 #include "parking_spot.hpp"
-#include "helpers.hpp"
 
 ParkingSpot::ParkingSpot()
 {
@@ -23,16 +22,16 @@ ParkingSpot::~ParkingSpot()
 
 void ParkingSpot::draw(sf::RenderTarget& target, sf::RenderStates states) const
 {
-    target.draw(_rect, states);
     target.draw(_circle, states);
+    target.draw(_rect, states);
 }
 
-sf::CircleShape& ParkingSpot::getCircle()
+Circle& ParkingSpot::getCircle()
 {
     return _circle;
 }
 
-sf::RectangleShape& ParkingSpot::getRect()
+Rect& ParkingSpot::getRect()
 {
     return _rect;
 }

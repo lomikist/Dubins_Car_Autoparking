@@ -37,8 +37,19 @@ float Engine::measureElapsedTime()
 
 void Engine::draw()
 {
+    // sf::CircleShape carCirclePoint;
+    // sf::CircleShape spotCirclePoint;
+    // carCirclePoint.setPosition(_car.getPath().carTangentPoint);
+    // spotCirclePoint.setPosition(_car.getPath().spotTangentPoint);
+    // carCirclePoint.setFillColor(sf::Color::Red);
+    // spotCirclePoint.setFillColor(sf::Color::Red);
+    // carCirclePoint.setRadius(3);
+    // spotCirclePoint.setRadius(3);
+
     _window.clear(sf::Color::Black);
 	drawObjects(_car, _parkingSpot);
+    // _window.draw(carCirclePoint);
+    // _window.draw(spotCirclePoint);
     _window.display();
 }
 
