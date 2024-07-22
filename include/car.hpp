@@ -46,6 +46,9 @@ private:
     sf::CircleShape _circle;
     sf::RectangleShape _rect;
     PathManager _pathManager;
+
+    sf::CircleShape carCirclePoint;
+    sf::CircleShape spotCirclePoint;
 };
 
 #endif  /* CAR_HPP */

@@ -24,7 +24,7 @@
 
 // Parking spot defines
 #define SPOT_POS_X 600
-#define SPOT_POS_Y 600
+#define SPOT_POS_Y 250
 #define SPOT_ROTATION 0
 
 // Parking spot color defines

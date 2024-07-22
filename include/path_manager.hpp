@@ -21,10 +21,10 @@ public:
             RSR,
         };
 
-        // void calcTangentPoints();
+        void calcTangentPoints();
 
+        Type type;
         float radius;
-        Type pathType;
         float pathLength;
         float certersDistance;
         float carCirclePathLen;

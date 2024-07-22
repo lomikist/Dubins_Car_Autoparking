@@ -29,6 +29,10 @@ void Car::draw(sf::RenderTarget& target, sf::RenderStates states) const
 {
     target.draw(_circle, states);
     target.draw(_rect, states);
+
+    // **************** Testing *************** //
+    target.draw(carCirclePoint);
+    target.draw(spotCirclePoint);
 }
 
 void Car::processAutoParking(float elapsedTime, ParkingSpot& parkingSpot)
@@ -38,8 +42,19 @@ void Car::processAutoParking(float elapsedTime, ParkingSpot& parkingSpot)
     _circle.setPosition(shortestPath.carCirclePos);
     parkingSpot.getCircle().setPosition(shortestPath.spotCirclePos);
 
+
+
+
+
+
     _isAutoParkingOn = false;
-    // _shortestPath.calcTangentPoints();
+    // **************** Testing *************** //
+    carCirclePoint.setPosition(shortestPath.carTangentPoint);
+    spotCirclePoint.setPosition(shortestPath.spotTangentPoint);
+    carCirclePoint.setFillColor(sf::Color::Green);
+    spotCirclePoint.setFillColor(sf::Color::Green);
+    carCirclePoint.setRadius(3);
+    spotCirclePoint.setRadius(3);
 }
 
 void Car::processUserControl(float elapsedTime)
