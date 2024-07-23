@@ -48,12 +48,13 @@ public:
     PathManager& operator=(PathManager&&) = delete;
 
     ParkingPath& findShortestPath(Rect& carRect, Rect& spotRect, float radius);
-    void addPathToVector(sf::Vector2f& carCirclePos, float carRot,
-        sf::Vector2f& spotCirclePos, float spotRot, float radius, PathType pathType);
+    void addPathToVector(Rect& carRect, sf::Vector2f& carCirclePos,
+        Rect& spotRect, sf::Vector2f& spotCirclePos, float radius, PathType pathType);
 
 private:
     ParkingPath _shortestPath;
     std::vector<ParkingPath> _paths;
+    bool borsh = true;
 };
 
 #endif  /* PATH_MANAGER_HPP */

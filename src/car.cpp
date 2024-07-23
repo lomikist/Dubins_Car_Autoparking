@@ -3,6 +3,8 @@
 #include "helpers.hpp"
 #include "path_manager.hpp"
 
+#include <iostream>
+
 Car::Car()
 {
     _speed = CAR_SPEED;
@@ -37,17 +39,42 @@ void Car::draw(sf::RenderTarget& target, sf::RenderStates states) const
 
 void Car::processAutoParking(float elapsedTime, ParkingSpot& parkingSpot)
 {
-    Path& shortestPath = _pathManager.findShortestPath(_rect,
-        parkingSpot.getRect(), _circle.getRadius());
+    Path& shortestPath = _pathManager.findShortestPath(
+                                                _rect,
+                                                parkingSpot.getRect(), 
+                                                _circle.getRadius()
+                                                );
     _circle.setPosition(shortestPath.carCirclePos);
     parkingSpot.getCircle().setPosition(shortestPath.spotCirclePos);
+    // _isAutoParkingOn = false;
+
+    auto [Cx1, Cy1] = _rect.getPosition();
+    auto [Tx1, Ty1] = shortestPath.carTangentPoint;
+    auto [Tx2, Ty2] = shortestPath.spotTangentPoint;
+    float epsilion = 0.5f;
+    if (isMoveCircle)
+    {
+        if (calcDistance(Cx1, Cy1, Tx1, Ty1) > 1.2f)
+        {
+            std::cout << "calcdist: " << calcDistance(Cx1, Cy1, Tx1, Ty1) << std::endl;
+            if (shortestPath.type == PathManager::PathType::LSL || shortestPath.type == PathManager::PathType::LSR)    
+                moveCircle(elapsedTime, MoveType::Left);
+            else
+                moveCircle(elapsedTime, MoveType::Right);
+        }
+        else
+            isMoveCircle = false;
+    }
+    else if (fabs(Cx1 - Tx2) > epsilion || fabs(Cy1 - Ty2) > epsilion)
+    {
+        moveStraight(elapsedTime);
+    }
 
 
 
 
 
 
-    _isAutoParkingOn = false;
     // **************** Testing *************** //
     carCirclePoint.setPosition(shortestPath.carTangentPoint);
     spotCirclePoint.setPosition(shortestPath.spotTangentPoint);

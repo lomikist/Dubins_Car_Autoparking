@@ -46,6 +46,7 @@ private:
     sf::CircleShape _circle;
     sf::RectangleShape _rect;
     PathManager _pathManager;
+    bool isMoveCircle = true;
 
     sf::CircleShape carCirclePoint;
     sf::CircleShape spotCirclePoint;
