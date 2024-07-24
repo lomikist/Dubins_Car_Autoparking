@@ -17,13 +17,13 @@ PathManager::ParkingPath& PathManager::findShortestPath(Rect& carRect, Rect& spo
     sf::Vector2f spotRightCirclePos = getCircleCenterPos(spotRect, radius, (int)Car::MoveType::Right);
 
     // Left turn, Straight, Left turn
-    addPathToVector(carRect, carLeftCirclePos, spotRect, spotLeftCirclePos, radius, PathType::LSL);
+    // addPathToVector(carRect, carLeftCirclePos, spotRect, spotLeftCirclePos, radius, PathType::LSL);
     // Left turn, Straight, Right turn
     addPathToVector(carRect, carLeftCirclePos, spotRect, spotRightCirclePos, radius, PathType::LSR);
     // Right turn, Straight, Left turn
-    addPathToVector(carRect, carRightCirclePos, spotRect, spotLeftCirclePos, radius, PathType::RSL);
+    // addPathToVector(carRect, carRightCirclePos, spotRect, spotLeftCirclePos, radius, PathType::RSL);
     // Right turn, Straight, Right turn
-    addPathToVector(carRect, carRightCirclePos, spotRect, spotRightCirclePos, radius, PathType::RSR);
+    // addPathToVector(carRect, carRightCirclePos, spotRect, spotRightCirclePos, radius, PathType::RSR);
     if (_paths.empty())
         throw std::runtime_error("Can't find shortest path!");
 
@@ -98,9 +98,9 @@ void PathManager::ParkingPath::calcTangentPoints()
     float thetaRad;
     float alphaRad = atan2f(y2 - y1, x2 - x1);
     if (type == PathType::LSL || type == PathType::RSR)
-        thetaRad = acosf(2 * radius / certersDistance);
-    else
         thetaRad = acosf(radius / certersDistance);
+    else
+        thetaRad = acosf(2 * radius / certersDistance);
 
     if (type == PathType::LSL)
     {
