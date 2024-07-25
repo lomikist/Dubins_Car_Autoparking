@@ -2,6 +2,7 @@
 #define PARKING_SPOT_HPP
 
 #include <SFML/Graphics.hpp>
+#include "helpers.hpp"
 
 class ParkingSpot : public sf::Drawable
 {
@@ -16,12 +17,12 @@ public:
 
     void draw(sf::RenderTarget& target, sf::RenderStates states) const override;
 
-    sf::CircleShape& getCircle();
-    sf::RectangleShape& getRect();
+    Rect& getRect();
+    Circle& getCircle();
 
 private:
-    sf::CircleShape _circle;
-    sf::RectangleShape _rect;
+    Rect _rect;
+    Circle _circle;
 };
 
 #endif  /* PARKING_SPOT_HPP */

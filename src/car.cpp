@@ -1,8 +1,8 @@
 #include <cmath>
 #include "car.hpp"
 #include "helpers.hpp"
+#include "path_manager.hpp"
 
-// TODO: Delete this include after testing
 #include <iostream>
 
 Car::Car()
@@ -31,21 +31,82 @@ void Car::draw(sf::RenderTarget& target, sf::RenderStates states) const
 {
     target.draw(_rect, states);
     target.draw(_circle, states);
+
+    // **************** Testing *************** //
+    target.draw(carCirclePoint);
+    target.draw(spotCirclePoint);
 }
 
 void Car::processAutoParking(float elapsedTime, ParkingSpot& parkingSpot)
 {
-    _shortestPath = findShortestPath(parkingSpot);
+    Path& shortestPath = _pathManager.findShortestPath(
+                                                _rect,
+                                                parkingSpot.getRect(), 
+                                                _circle.getRadius()
+                                                );
+    _circle.setPosition(shortestPath.carCirclePos);
+    parkingSpot.getCircle().setPosition(shortestPath.spotCirclePos);
 
-    // ************** Testing ************** //
-    for (auto elem : _paths)
+    auto [Cx1, Cy1] = _rect.getPosition();
+    auto [Sx1, Sy1] = parkingSpot.getRect().getPosition();
+    auto [Tx1, Ty1] = shortestPath.carTangentPoint;
+    auto [Tx2, Ty2] = shortestPath.spotTangentPoint;
+    float epsilion = 0.1f;
+
+    // elapsedTime *= 0.1f;
+    // _speed *= 0.1f;
+
+    // std::cout << "Coords: " << Cx1 << "  " << Cy1 << "  " << Tx1 << "  " << Ty1 << std::endl;
+    // std::cout << "Coords: " << fabs(Cx1 - Tx1) << "  " << fabs(Cy1 - Ty1) << std::endl;
+    // std::cout << "Distance: " << calcDistance(_circle.getPosition().x, _circle.getPosition().y, Cx1, Cy1) << std::endl;
+    // _isAutoParkingOn = false;
+
+    if (isStop)
+        return;
+
+    if (state == 0)
     {
-        std::cout << elem.pathLength << ", Path type: " << (int)elem.pathType << std::endl;
+        if (fabs(Cx1 - Tx1) > epsilion || fabs(Cy1 - Ty1) > epsilion)
+        {
+            if (shortestPath.type == PathManager::PathType::LSL || shortestPath.type == PathManager::PathType::LSR)    
+                moveCircle(elapsedTime, MoveType::Left);
+            else
+                moveCircle(elapsedTime, MoveType::Right);
+        }
+        else
+            state = 1;
     }
-    std::cout << "\n\n-- Shortest path\n";
-        std::cout << _shortestPath.pathLength << ", Path type: "
-            << (int)_shortestPath.pathType << std::endl;
-    _isAutoParkingOn = false;
+    else if ((fabs(Cx1 - Tx2) > 0.5 || fabs(Cy1 - Ty2) > 0.5) && (state == 1))
+    {
+        std::cout << "calcdist: " << calcDistance(Cx1, Cy1, Tx2, Ty2) << std::endl;
+        moveStraight(elapsedTime);
+    }
+    else
+    {
+        state = 2;
+        if ((fabs(Cx1 - Sx1) > 0.8 || fabs(Cy1 - Sy1) > 0.8) && (state == 2))
+        {
+            if (shortestPath.type == PathManager::PathType::LSL || shortestPath.type == PathManager::PathType::RSL)    
+                moveCircle(elapsedTime, MoveType::Left);
+            else
+                moveCircle(elapsedTime, MoveType::Right);
+        }
+        else
+            isStop = true;
+    }
+
+
+
+
+
+
+    // **************** Testing *************** //
+    carCirclePoint.setPosition(shortestPath.carTangentPoint);
+    spotCirclePoint.setPosition(shortestPath.spotTangentPoint);
+    carCirclePoint.setFillColor(sf::Color::Green);
+    spotCirclePoint.setFillColor(sf::Color::Green);
+    carCirclePoint.setRadius(3);
+    spotCirclePoint.setRadius(3);
 }
 
 void Car::processUserControl(float elapsedTime)
@@ -61,58 +122,6 @@ void Car::processUserControl(float elapsedTime)
         else
             move(elapsedTime, Car::MoveType::Straight);
     }
-}
-
-Car::ParkingPath& Car::findShortestPath(ParkingSpot& parkingSpot)
-{
-    // Calculate car and parking spot left and right circles centers
-    float radius = _circle.getRadius();
-    sf::RectangleShape& spotRect = parkingSpot.getRect();
-    sf::Vector2f carLeftCirclePos = getCircleCenterPos(_rect, radius, Car::MoveType::Left);
-    sf::Vector2f carRightCirclePos = getCircleCenterPos(_rect, radius, Car::MoveType::Right);
-    sf::Vector2f spotLeftCirclePos = getCircleCenterPos(spotRect, radius, Car::MoveType::Left);
-    sf::Vector2f spotRightCirclePos = getCircleCenterPos(spotRect, radius, Car::MoveType::Right);
-
-    float carRot = _rect.getRotation();
-    float spotRot = spotRect.getRotation();
-    // Left turn, Straight, Left turn
-    addPathToVector(carLeftCirclePos, carRot, spotLeftCirclePos, spotRot, radius, Car::PathType::LSL);
-    // Left turn, Straight, Right turn
-    addPathToVector(carLeftCirclePos, carRot, spotRightCirclePos, spotRot, radius, Car::PathType::LSR);
-    // Right turn, Straight, Left turn
-    addPathToVector(carRightCirclePos, carRot, spotLeftCirclePos, spotRot, radius, Car::PathType::RSL);
-    // Right turn, Straight, Right turn
-    addPathToVector(carRightCirclePos, carRot, spotRightCirclePos, spotRot, radius, Car::PathType::RSR);
-
-    // Return shortest path
-    auto cmp = [](const ParkingPath& a, const ParkingPath& b)
-    {
-        return a.pathLength < b.pathLength;
-    };
-    auto shortestPathIt = std::min_element(_paths.begin(), _paths.end(), cmp);
-    if (shortestPathIt != _paths.end())
-        return *shortestPathIt;
-    return _paths.back();
-}
-
-void Car::addPathToVector(sf::Vector2f& carCirclePos, float carRotation,
-    sf::Vector2f& spotCirclePos, float spotRotation, float radius, PathType pathType)
-{
-    auto [x1, y1] = carCirclePos;
-    auto [x2, y2] = spotCirclePos;
-    float alphaDegree = radianToDegree(std::atan2(y2 - y1, x2 - x1)) - carRotation;
-    float betaDegree = spotRotation - radianToDegree(std::atan2(y2 - y1, x2 - x1) - pi);
-
-    ParkingPath path;
-    path.pathType = pathType;
-    path.carCirclePos = carCirclePos;
-    path.spotCirclePos = spotCirclePos;
-    path.carCirclePathLen = radius * degreeMod(alphaDegree, 360.0f);
-    path.spotCirclePathLen = radius * degreeMod(betaDegree, 360.0f);
-    path.certersDistance = calcDistance(x1, y1, x2, y2);
-    path.straightPathLen = path.certersDistance;
-    path.pathLength = path.carCirclePathLen + path.straightPathLen + path.spotCirclePathLen;
-    _paths.push_back(path);
 }
 
 void Car::move(float elapsedTime, MoveType moveType)
@@ -133,7 +142,7 @@ void Car::moveStraight(float elapsedTime)
 
 void Car::moveCircle(float elapsedTime, MoveType moveType)
 {
-    _angVelocity = radianToDegree(elapsedTime * (_speed / _circle.getRadius()));
+    _angVelocity = elapsedTime * radianToDegree(_speed / _circle.getRadius());
     if (moveType == MoveType::Left)
         _rect.rotate(-_angVelocity);
     else

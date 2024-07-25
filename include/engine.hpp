@@ -1,7 +1,9 @@
 #ifndef ENGINE_HPP
 #define ENGINE_HPP
 
+#include <SFML/Graphics.hpp>
 #include "car.hpp"
+#include "parking_spot.hpp"
 
 // Singleton design pattern is used
 class Engine final

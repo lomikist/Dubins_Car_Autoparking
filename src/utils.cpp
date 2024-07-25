@@ -19,17 +19,17 @@ float degreeMod(float degree, float x)
 
 float calcDistance(float x1, float y1, float x2, float y2)
 {
-    return sqrt(pow(x2 - x1, 2) + pow(y2 - y1, 2));
+    return sqrt(powf(x2 - x1, 2) + powf(y2 - y1, 2));
 }
 
-sf::Vector2f getCircleCenterPos(const sf::RectangleShape& rect,
-    float radius, Car::MoveType moveType)
+sf::Vector2f getCircleCenterPos(const Rect& rect, float radius, int moveType)
 {
     const sf::Vector2f& rectPos = rect.getPosition();
     float angleRadian = degreeToRadian(rect.getRotation());
-    float offsetX = radius * std::sin(angleRadian);
-    float offsetY = radius * std::cos(angleRadian);
-    if (moveType == Car::MoveType::Left)
+    float offsetX = radius * sin(angleRadian);
+    float offsetY = radius * cos(angleRadian);
+
+    if (static_cast<Car::MoveType>(moveType) == Car::MoveType::Left)
         return {rectPos.x + offsetX, rectPos.y - offsetY};
     else
         return {rectPos.x - offsetX, rectPos.y + offsetY};

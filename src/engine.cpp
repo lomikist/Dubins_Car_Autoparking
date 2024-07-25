@@ -38,7 +38,7 @@ float Engine::measureElapsedTime()
 void Engine::draw()
 {
     _window.clear(sf::Color::Black);
-	drawObjects(_car, _parkingSpot);
+	drawObjects(_parkingSpot, _car);
     _window.display();
 }
 
