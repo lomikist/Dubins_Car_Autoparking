@@ -29,8 +29,8 @@ Car::~Car()
 
 void Car::draw(sf::RenderTarget& target, sf::RenderStates states) const
 {
-    target.draw(_circle, states);
     target.draw(_rect, states);
+    target.draw(_circle, states);
 
     // **************** Testing *************** //
     target.draw(carCirclePoint);
@@ -48,33 +48,55 @@ void Car::processAutoParking(float elapsedTime, ParkingSpot& parkingSpot)
     parkingSpot.getCircle().setPosition(shortestPath.spotCirclePos);
 
     auto [Cx1, Cy1] = _rect.getPosition();
+    auto [Sx1, Sy1] = parkingSpot.getRect().getPosition();
     auto [Tx1, Ty1] = shortestPath.carTangentPoint;
     auto [Tx2, Ty2] = shortestPath.spotTangentPoint;
-    float epsilion = 0.5f;
+    float epsilion = 0.1f;
 
-    std::cout << "Coords: " << Cx1 << "  " << Cy1 << "  " << Tx1 << "  " << Ty1 << std::endl;
+    // elapsedTime *= 0.1f;
+    // _speed *= 0.1f;
 
-    // if (isMoveCircle)
-    // {
-    //     if (calcDistance(Cx1, Cy1, Tx1, Ty1) > 1.2f)
-    //     {
-    //         std::cout << "calcdist: " << calcDistance(Cx1, Cy1, Tx1, Ty1) << std::endl;
-    //         if (shortestPath.type == PathManager::PathType::LSL || shortestPath.type == PathManager::PathType::LSR)    
-    //             moveCircle(elapsedTime, MoveType::Left);
-    //         else
-    //             moveCircle(elapsedTime, MoveType::Right);
-    //     }
-    //     else
-    //         isMoveCircle = false;
-    // }
-    // else if (fabs(Cx1 - Tx2) > epsilion || fabs(Cy1 - Ty2) > epsilion)
-    // {
-    //     moveStraight(elapsedTime);
-    // }
+    // std::cout << "Coords: " << Cx1 << "  " << Cy1 << "  " << Tx1 << "  " << Ty1 << std::endl;
+    // std::cout << "Coords: " << fabs(Cx1 - Tx1) << "  " << fabs(Cy1 - Ty1) << std::endl;
+    // std::cout << "Distance: " << calcDistance(_circle.getPosition().x, _circle.getPosition().y, Cx1, Cy1) << std::endl;
+    // _isAutoParkingOn = false;
+
+    if (isStop)
+        return;
+
+    if (state == 0)
+    {
+        if (fabs(Cx1 - Tx1) > epsilion || fabs(Cy1 - Ty1) > epsilion)
+        {
+            if (shortestPath.type == PathManager::PathType::LSL || shortestPath.type == PathManager::PathType::LSR)    
+                moveCircle(elapsedTime, MoveType::Left);
+            else
+                moveCircle(elapsedTime, MoveType::Right);
+        }
+        else
+            state = 1;
+    }
+    else if ((fabs(Cx1 - Tx2) > 0.5 || fabs(Cy1 - Ty2) > 0.5) && (state == 1))
+    {
+        std::cout << "calcdist: " << calcDistance(Cx1, Cy1, Tx2, Ty2) << std::endl;
+        moveStraight(elapsedTime);
+    }
+    else
+    {
+        state = 2;
+        if ((fabs(Cx1 - Sx1) > 0.8 || fabs(Cy1 - Sy1) > 0.8) && (state == 2))
+        {
+            if (shortestPath.type == PathManager::PathType::LSL || shortestPath.type == PathManager::PathType::RSL)    
+                moveCircle(elapsedTime, MoveType::Left);
+            else
+                moveCircle(elapsedTime, MoveType::Right);
+        }
+        else
+            isStop = true;
+    }
 
 
 
-    _isAutoParkingOn = false;
 
 
 
@@ -120,7 +142,7 @@ void Car::moveStraight(float elapsedTime)
 
 void Car::moveCircle(float elapsedTime, MoveType moveType)
 {
-    _angVelocity = radianToDegree(elapsedTime * (_speed / _circle.getRadius()));
+    _angVelocity = elapsedTime * radianToDegree(_speed / _circle.getRadius());
     if (moveType == MoveType::Left)
         _rect.rotate(-_angVelocity);
     else

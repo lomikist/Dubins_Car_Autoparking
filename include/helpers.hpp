@@ -14,7 +14,7 @@
 #define CAR_POS_X 250
 #define CAR_POS_Y 250
 #define CAR_ROTATION 0
-#define CAR_SPEED 100
+#define CAR_SPEED 10
 #define AUTO_PARKING true
 
 // Car color defines
@@ -23,8 +23,8 @@
 #define CAR_BLUE 25
 
 // Parking spot defines
-#define SPOT_POS_X 600
-#define SPOT_POS_Y 250
+#define SPOT_POS_X 400
+#define SPOT_POS_Y 400
 #define SPOT_ROTATION 0
 
 // Parking spot color defines
