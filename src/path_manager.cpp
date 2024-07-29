@@ -4,6 +4,9 @@
 
 PathManager::ParkingPath& PathManager::findShortestPath(Rect& carRect, Rect& spotRect, float radius)
 {
+    if (_isShortestPathFound)
+        return _shortestPath;
+
     // Calculate car and parking spot left and right circles centers
     sf::Vector2f carLeftCirclePos = getCircleCenterPos(carRect, radius, (int)Car::MoveType::Left);
     sf::Vector2f carRightCirclePos = getCircleCenterPos(carRect, radius, (int)Car::MoveType::Right);
@@ -50,6 +53,7 @@ PathManager::ParkingPath& PathManager::findShortestPath(Rect& carRect, Rect& spo
     //     std::cout << _shortestPath.pathLength << ", Path type: "
     //         << (int)_shortestPath.type << std::endl;
 
+    _isShortestPathFound = true;
     return _shortestPath;
 }
 
@@ -62,6 +66,7 @@ void PathManager::addPathToVector(Rect& carRect, sf::Vector2f& carCirclePos,
     path.radius = radius;
     path.carCirclePos = carCirclePos;
     path.spotCirclePos = spotCirclePos;
+    path.state = ParkingPath::State::CarCircle;
     path.certersDistance = calcDistance(carCirclePos, spotCirclePos);
     path.calcTangentPoints();
 

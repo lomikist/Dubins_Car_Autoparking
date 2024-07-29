@@ -8,7 +8,6 @@
 Car::Car()
 {
     _speed = CAR_SPEED;
-    _isAutoParkingOn = AUTO_PARKING;
     sf::Vector2f size(CAR_WIDTH, CAR_HEIGHT);
     _rect.setSize(size);
     _rect.setOrigin(size / 2.0f);
@@ -37,6 +36,19 @@ void Car::draw(sf::RenderTarget& target, sf::RenderStates states) const
     target.draw(spotCirclePoint);
 }
 
+void Car::processMove(float elapsedTime, ParkingSpot& parkingSpot)
+{
+    if (sf::Keyboard::isKeyPressed(sf::Keyboard::W))
+        _isAutoParkingOn = false;
+    else
+        _isAutoParkingOn = true;
+
+    if (_isAutoParkingOn)
+        processAutoParking(elapsedTime, parkingSpot);
+    else
+        processUserControl(elapsedTime);
+}
+
 void Car::processAutoParking(float elapsedTime, ParkingSpot& parkingSpot)
 {
     Path& shortestPath = _pathManager.findShortestPath(
@@ -53,47 +65,46 @@ void Car::processAutoParking(float elapsedTime, ParkingSpot& parkingSpot)
     auto [Tx2, Ty2] = shortestPath.spotTangentPoint;
     float epsilion = 0.1f;
 
-    // elapsedTime *= 0.1f;
-    // _speed *= 0.1f;
-
-    // std::cout << "Coords: " << Cx1 << "  " << Cy1 << "  " << Tx1 << "  " << Ty1 << std::endl;
+    std::cout << "Coords: " << Cx1 << "  " << Cy1 << "  " << Tx1 << "  " << Ty1 << std::endl;
     // std::cout << "Coords: " << fabs(Cx1 - Tx1) << "  " << fabs(Cy1 - Ty1) << std::endl;
     // std::cout << "Distance: " << calcDistance(_circle.getPosition().x, _circle.getPosition().y, Cx1, Cy1) << std::endl;
-    // _isAutoParkingOn = false;
 
-    if (isStop)
-        return;
-
-    if (state == 0)
+    if (shortestPath.state == Path::State::CarCircle)
     {
         if (fabs(Cx1 - Tx1) > epsilion || fabs(Cy1 - Ty1) > epsilion)
         {
-            if (shortestPath.type == PathManager::PathType::LSL || shortestPath.type == PathManager::PathType::LSR)    
+            if (shortestPath.type == Path::Type::LSL || shortestPath.type == Path::Type::LSR)    
                 moveCircle(elapsedTime, MoveType::Left);
             else
                 moveCircle(elapsedTime, MoveType::Right);
         }
         else
-            state = 1;
+            shortestPath.state = Path::State::Straight;
     }
-    else if ((fabs(Cx1 - Tx2) > 0.5 || fabs(Cy1 - Ty2) > 0.5) && (state == 1))
+    else if (shortestPath.state == Path::State::Straight)
     {
-        std::cout << "calcdist: " << calcDistance(Cx1, Cy1, Tx2, Ty2) << std::endl;
-        moveStraight(elapsedTime);
+        if (fabs(Cx1 - Tx2) > epsilion || fabs(Cy1 - Ty2) > epsilion)
+            moveStraight(elapsedTime);
+        else
+            shortestPath.state = Path::State::SpotCircle;
     }
-    else
+    else if (shortestPath.state == Path::State::SpotCircle)
     {
-        state = 2;
-        if ((fabs(Cx1 - Sx1) > 0.8 || fabs(Cy1 - Sy1) > 0.8) && (state == 2))
+        if (fabs(Cx1 - Sx1) > epsilion || fabs(Cy1 - Sy1) > epsilion)
         {
-            if (shortestPath.type == PathManager::PathType::LSL || shortestPath.type == PathManager::PathType::RSL)    
+            if (shortestPath.type == Path::Type::LSL || shortestPath.type == Path::Type::RSL)    
                 moveCircle(elapsedTime, MoveType::Left);
             else
                 moveCircle(elapsedTime, MoveType::Right);
         }
         else
-            isStop = true;
+            shortestPath.state = Path::State::Stop;
     }
+
+
+
+
+
 
 
 
@@ -115,28 +126,20 @@ void Car::processUserControl(float elapsedTime)
     {
         if (sf::Keyboard::isKeyPressed(sf::Keyboard::A) &&
             !sf::Keyboard::isKeyPressed(sf::Keyboard::D))
-            move(elapsedTime, Car::MoveType::Left);
+            moveCircle(elapsedTime, Car::MoveType::Left);
         else if (sf::Keyboard::isKeyPressed(sf::Keyboard::D) &&
             !sf::Keyboard::isKeyPressed(sf::Keyboard::A))
-            move(elapsedTime, Car::MoveType::Right);
+            moveCircle(elapsedTime, Car::MoveType::Right);
         else
-            move(elapsedTime, Car::MoveType::Straight);
+            moveStraight(elapsedTime);
     }
-}
-
-void Car::move(float elapsedTime, MoveType moveType)
-{
-    if (moveType == MoveType::Straight)
-        moveStraight(elapsedTime);
-    else
-        moveCircle(elapsedTime, moveType);
 }
 
 void Car::moveStraight(float elapsedTime)
 {
     float angleRadian = degreeToRadian(_rect.getRotation());
-    float offsetX = elapsedTime * _speed * std::cos(angleRadian);
-    float offsetY = elapsedTime * _speed * std::sin(angleRadian);
+    float offsetX = elapsedTime * _speed * cosf(angleRadian);
+    float offsetY = elapsedTime * _speed * sinf(angleRadian);
     _rect.move(offsetX, offsetY);
 }
 
