@@ -54,7 +54,6 @@ public:
 private:
     ParkingPath _shortestPath;
     std::vector<ParkingPath> _paths;
-    bool borsh = true;
 };
 
 #endif  /* PATH_MANAGER_HPP */

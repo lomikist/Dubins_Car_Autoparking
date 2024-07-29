@@ -23,9 +23,9 @@
 #define CAR_BLUE 25
 
 // Parking spot defines
-#define SPOT_POS_X 400
-#define SPOT_POS_Y 400
-#define SPOT_ROTATION 0
+#define SPOT_POS_X 600
+#define SPOT_POS_Y 600
+#define SPOT_ROTATION 120
 
 // Parking spot color defines
 #define SPOT_RED 255
@@ -44,8 +44,8 @@ typedef sf::RectangleShape Rect;
 // Util functions
 float radianToDegree(float radian);
 float degreeToRadian(float degree);
-float degreeMod(float degree, float x);
 float calcDistance(float x1, float y1, float x2, float y2);
+float calcDistance(const sf::Vector2f& point1, const sf::Vector2f& point2);
 sf::Vector2f getCircleCenterPos(const Rect& rect, float radius, int moveType);
 
 #endif  /* HELPERS_HPP */

@@ -46,10 +46,9 @@ private:
     sf::CircleShape _circle;
     sf::RectangleShape _rect;
     PathManager _pathManager;
+
     int state = 0;
-
     bool isStop = false;
-
     sf::CircleShape carCirclePoint;
     sf::CircleShape spotCirclePoint;
 };
