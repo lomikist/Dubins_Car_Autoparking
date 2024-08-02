@@ -29,29 +29,27 @@ public:
 
     void draw(sf::RenderTarget& target, sf::RenderStates states) const override;
 
+    // Process car move
+    void processMove(float elapsedTime, ParkingSpot& parkingSpot);
     void processAutoParking(float elapsedTime, ParkingSpot& parkingSpot);
     void processUserControl(float elapsedTime);
-
-    // Process car move
-    void move(float elapsedTime, MoveType moveType);
     void moveStraight(float elapsedTime);
     void moveCircle(float elapsedTime, MoveType moveType);
 
     bool isAutoParkingOn() const;
 
 private:
+    Rect _rect;
+    Circle _circle;
     float _speed;
     float _angVelocity;
     bool _isAutoParkingOn;
-    sf::CircleShape _circle;
-    sf::RectangleShape _rect;
     PathManager _pathManager;
+
     int state = 0;
-
     bool isStop = false;
-
-    sf::CircleShape carCirclePoint;
-    sf::CircleShape spotCirclePoint;
+    Circle carCirclePoint;
+    Circle spotCirclePoint;
 };
 
 #endif  /* CAR_HPP */

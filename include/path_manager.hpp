@@ -21,9 +21,18 @@ public:
             RSR,
         };
 
+        enum class State
+        {
+            CarCircle,
+            Straight,
+            SpotCircle,
+            Stop,
+        };
+
         void calcTangentPoints();
 
         Type type;
+        State state;
         float radius;
         float pathLength;
         float certersDistance;
@@ -54,7 +63,7 @@ public:
 private:
     ParkingPath _shortestPath;
     std::vector<ParkingPath> _paths;
-    bool borsh = true;
+    bool _isShortestPathFound = false;
 };
 
 #endif  /* PATH_MANAGER_HPP */
