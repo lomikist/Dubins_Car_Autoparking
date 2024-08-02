@@ -65,8 +65,8 @@ void Car::processAutoParking(float elapsedTime, ParkingSpot& parkingSpot)
     auto [Tx2, Ty2] = shortestPath.spotTangentPoint;
     float epsilion = 0.1f;
 
-    std::cout << "Coords: " << Cx1 << "  " << Cy1 << "  " << Tx1 << "  " << Ty1 << std::endl;
-    // std::cout << "Coords: " << fabs(Cx1 - Tx1) << "  " << fabs(Cy1 - Ty1) << std::endl;
+    // std::cout << "Coords: " << Cx1 << "  " << Cy1 << "  " << Tx1 << "  " << Ty1 << std::endl;
+    std::cout << "Coords: " << fabs(Cx1 - Tx2) << "  " << fabs(Cy1 - Ty2) << std::endl;
     // std::cout << "Distance: " << calcDistance(_circle.getPosition().x, _circle.getPosition().y, Cx1, Cy1) << std::endl;
 
     if (shortestPath.state == Path::State::CarCircle)
